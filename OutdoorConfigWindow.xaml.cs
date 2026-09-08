@@ -1,4 +1,3 @@
-```csharp
 using System;
 using System.Windows;
 using SNAPPY.Models;
@@ -132,4 +131,3 @@ public partial class OutdoorConfigWindow : Window
         DialogResult = false;
     }
 }
-```

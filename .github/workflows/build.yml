@@ -1,0 +1,36 @@
+name: Build SNAPPY
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        run: dotnet restore SNAPPY/SNAPPY.csproj
+
+      - name: Build
+        run: dotnet build SNAPPY/SNAPPY.csproj --configuration Release --no-restore
+
+      - name: Publish SNAPPY
+        run: dotnet publish SNAPPY/SNAPPY.csproj --configuration Release --runtime win-x64 --self-contained true --output publish/SNAPPY
+
+      - name: Upload SNAPPY EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: SNAPPY-Windows-x64
+          path: publish/SNAPPY

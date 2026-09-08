@@ -1,7 +1,5 @@
-```csharp
 using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,16 +22,13 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
-        _configurationService =
-            new ConfigurationService();
+        _configurationService = new ConfigurationService();
 
-        _talkService =
-            new HikvisionTalkService();
+        _talkService = new HikvisionTalkService();
 
         OutdoorList.ItemsSource = _stations;
 
-        _talkService.StateChanged +=
-            TalkService_StateChanged;
+        _talkService.StateChanged += TalkService_StateChanged;
 
         SetButtonsEnabled(false);
     }
@@ -112,17 +107,16 @@ public partial class MainWindow : Window
 
                 SetButtonsEnabled(false);
 
+                LiveVideoText.Text =
+                    "LIVE VIDEO";
+
                 FooterText.Text =
                     "Outdoor station configuration updated.";
             }
         }
         catch (Exception ex)
         {
-            MessageBox.Show(
-                ex.Message,
-                "SNAPPY",
-                MessageBoxButton.OK,
-                MessageBoxImage.Error);
+            ShowError(ex);
         }
     }
 
@@ -138,6 +132,9 @@ public partial class MainWindow : Window
             SelectedStationText.Text =
                 "No station selected";
 
+            LiveVideoText.Text =
+                "LIVE VIDEO";
+
             SetButtonsEnabled(false);
 
             return;
@@ -146,8 +143,7 @@ public partial class MainWindow : Window
         SelectedStationText.Text =
             $"{_selectedStation.DisplayName}  |  {_selectedStation.IpAddress}";
 
-        _talkService.SelectStation(
-            _selectedStation);
+        _talkService.SelectStation(_selectedStation);
 
         SetButtonsEnabled(
             _selectedStation.Enabled);
@@ -196,8 +192,7 @@ public partial class MainWindow : Window
 
         try
         {
-            if (_talkService.State ==
-                TalkState.Connected)
+            if (_talkService.State == TalkState.Connected)
             {
                 await _talkService.DisconnectAsync();
             }
@@ -349,4 +344,3 @@ public partial class MainWindow : Window
         }
     }
 }
-```

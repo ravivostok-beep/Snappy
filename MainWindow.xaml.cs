@@ -11,9 +11,7 @@ namespace SNAPPY;
 public partial class MainWindow : Window
 {
     private readonly ObservableCollection<OutdoorStation> _stations = new();
-
     private readonly ConfigurationService _configurationService;
-
     private readonly HikvisionTalkService _talkService;
 
     private OutdoorStation? _selectedStation;
@@ -23,7 +21,6 @@ public partial class MainWindow : Window
         InitializeComponent();
 
         _configurationService = new ConfigurationService();
-
         _talkService = new HikvisionTalkService();
 
         OutdoorList.ItemsSource = _stations;
@@ -33,6 +30,7 @@ public partial class MainWindow : Window
         SetButtonsEnabled(false);
     }
 
+
     private async void Window_Loaded(
         object sender,
         RoutedEventArgs e)
@@ -40,7 +38,6 @@ public partial class MainWindow : Window
         try
         {
             StatusText.Text = "LOADING";
-
             FooterText.Text =
                 "Loading outdoor station configuration...";
 
@@ -66,6 +63,7 @@ public partial class MainWindow : Window
         }
     }
 
+
     private async Task LoadStationsAsync()
     {
         var stations =
@@ -78,6 +76,7 @@ public partial class MainWindow : Window
             _stations.Add(station);
         }
     }
+
 
     private async void OutdoorConfigButton_Click(
         object sender,
@@ -105,10 +104,13 @@ public partial class MainWindow : Window
                 SelectedStationText.Text =
                     "No station selected";
 
-                SetButtonsEnabled(false);
+                SelectedStationInfoText.Text =
+                    "No device selected";
 
                 LiveVideoText.Text =
                     "LIVE VIDEO";
+
+                SetButtonsEnabled(false);
 
                 FooterText.Text =
                     "Outdoor station configuration updated.";
@@ -119,6 +121,7 @@ public partial class MainWindow : Window
             ShowError(ex);
         }
     }
+
 
     private void OutdoorList_SelectionChanged(
         object sender,
@@ -132,6 +135,9 @@ public partial class MainWindow : Window
             SelectedStationText.Text =
                 "No station selected";
 
+            SelectedStationInfoText.Text =
+                "No device selected";
+
             LiveVideoText.Text =
                 "LIVE VIDEO";
 
@@ -140,17 +146,34 @@ public partial class MainWindow : Window
             return;
         }
 
+
         SelectedStationText.Text =
             $"{_selectedStation.DisplayName}  |  {_selectedStation.IpAddress}";
 
-        _talkService.SelectStation(_selectedStation);
+
+        SelectedStationInfoText.Text =
+            $"{_selectedStation.DisplayName}\n" +
+            $"IP: {_selectedStation.IpAddress}\n" +
+            $"ISAPI Port: {_selectedStation.Port}\n" +
+            $"User: {_selectedStation.Username}";
+
+
+        _talkService.SelectStation(
+            _selectedStation);
+
 
         SetButtonsEnabled(
             _selectedStation.Enabled);
 
+
         LiveVideoText.Text =
             $"LIVE VIDEO\n{_selectedStation.DisplayName}";
+
+
+        FooterText.Text =
+            $"Selected {_selectedStation.DisplayName}.";
     }
+
 
     private async void AnswerButton_Click(
         object sender,
@@ -169,6 +192,7 @@ public partial class MainWindow : Window
         }
     }
 
+
     private async void RejectButton_Click(
         object sender,
         RoutedEventArgs e)
@@ -182,6 +206,7 @@ public partial class MainWindow : Window
             ShowError(ex);
         }
     }
+
 
     private async void TalkButton_Click(
         object sender,
@@ -207,7 +232,8 @@ public partial class MainWindow : Window
         }
     }
 
-    private async void Unlock1Button_Click(
+
+    private async void UnlockDoorButton_Click(
         object sender,
         RoutedEventArgs e)
     {
@@ -216,30 +242,42 @@ public partial class MainWindow : Window
 
         try
         {
-            await _talkService.UnlockAsync(1);
+            UnlockDoorButton.IsEnabled = false;
+
+            StatusText.Text =
+                "UNLOCKING";
+
+            FooterText.Text =
+                $"Sending door unlock command to {_selectedStation!.DisplayName}...";
+
+
+            await _talkService.UnlockDoorAsync();
+
+
+            StatusText.Text =
+                "UNLOCKED";
+
+            FooterText.Text =
+                $"Door unlocked successfully - {_selectedStation.DisplayName}";
+
+
+            MessageBox.Show(
+                "Door unlocked successfully.",
+                "SNAPPY",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
         }
         catch (Exception ex)
         {
             ShowError(ex);
         }
-    }
-
-    private async void Unlock2Button_Click(
-        object sender,
-        RoutedEventArgs e)
-    {
-        if (!EnsureStationSelected())
-            return;
-
-        try
+        finally
         {
-            await _talkService.UnlockAsync(2);
-        }
-        catch (Exception ex)
-        {
-            ShowError(ex);
+            UnlockDoorButton.IsEnabled =
+                _selectedStation?.Enabled == true;
         }
     }
+
 
     private void TalkService_StateChanged(
         object? sender,
@@ -247,53 +285,85 @@ public partial class MainWindow : Window
     {
         Dispatcher.Invoke(() =>
         {
-            FooterText.Text = e.Message;
+            FooterText.Text =
+                e.Message;
 
             switch (e.State)
             {
                 case TalkState.Idle:
-                    StatusText.Text = "READY";
+
+                    StatusText.Text =
+                        "READY";
+
                     TalkButton.Content =
                         "START TWO-WAY TALK";
+
                     break;
+
 
                 case TalkState.Calling:
-                    StatusText.Text = "CALLING";
+
+                    StatusText.Text =
+                        "CALLING";
+
                     TalkButton.Content =
                         "CONNECTING...";
+
                     break;
+
 
                 case TalkState.Connected:
-                    StatusText.Text = "TALKING";
+
+                    StatusText.Text =
+                        "TALKING";
+
                     TalkButton.Content =
                         "END TWO-WAY TALK";
+
                     break;
+
 
                 case TalkState.Rejected:
-                    StatusText.Text = "REJECTED";
+
+                    StatusText.Text =
+                        "REJECTED";
+
                     TalkButton.Content =
                         "START TWO-WAY TALK";
+
                     break;
+
 
                 case TalkState.Disconnected:
-                    StatusText.Text = "READY";
+
+                    StatusText.Text =
+                        "READY";
+
                     TalkButton.Content =
                         "START TWO-WAY TALK";
+
                     break;
 
+
                 case TalkState.Error:
-                    StatusText.Text = "ERROR";
+
+                    StatusText.Text =
+                        "ERROR";
+
                     TalkButton.Content =
                         "START TWO-WAY TALK";
+
                     break;
             }
         });
     }
 
+
     private bool EnsureStationSelected()
     {
         if (_selectedStation != null)
             return true;
+
 
         MessageBox.Show(
             "Please select an outdoor station first.",
@@ -304,22 +374,33 @@ public partial class MainWindow : Window
         return false;
     }
 
+
     private void SetButtonsEnabled(
         bool enabled)
     {
-        AnswerButton.IsEnabled = enabled;
-        RejectButton.IsEnabled = enabled;
-        TalkButton.IsEnabled = enabled;
-        Unlock1Button.IsEnabled = enabled;
-        Unlock2Button.IsEnabled = enabled;
+        AnswerButton.IsEnabled =
+            enabled;
+
+        RejectButton.IsEnabled =
+            enabled;
+
+        TalkButton.IsEnabled =
+            enabled;
+
+        UnlockDoorButton.IsEnabled =
+            enabled;
     }
 
-    private void ShowError(Exception ex)
+
+    private void ShowError(
+        Exception ex)
     {
-        StatusText.Text = "ERROR";
+        StatusText.Text =
+            "ERROR";
 
         FooterText.Text =
             ex.Message;
+
 
         MessageBox.Show(
             ex.Message,
@@ -328,13 +409,15 @@ public partial class MainWindow : Window
             MessageBoxImage.Error);
     }
 
+
     private void Window_Closing(
         object? sender,
         System.ComponentModel.CancelEventArgs e)
     {
         try
         {
-            _talkService.DisconnectAsync()
+            _talkService
+                .DisconnectAsync()
                 .GetAwaiter()
                 .GetResult();
         }

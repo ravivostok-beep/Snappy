@@ -2,17 +2,37 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
+
+    <!-- .NET 10 + Windows 10 -->
+    <TargetFramework>net10.0-windows10.0.17763.0</TargetFramework>
+
+    <!-- Minimum supported Windows version -->
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+
+    <!-- WPF -->
     <UseWPF>true</UseWPF>
+
+    <!-- Code settings -->
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- Application -->
     <AssemblyName>SNAPPY</AssemblyName>
     <RootNamespace>SNAPPY</RootNamespace>
+
+    <!-- x64 -->
     <PlatformTarget>x64</PlatformTarget>
+
+    <!-- Windows runtime -->
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+
+    <!-- Self-contained EXE -->
     <SelfContained>true</SelfContained>
+
+    <!-- Keep false for now -->
     <PublishSingleFile>false</PublishSingleFile>
+
+    <!-- Required when building Windows target on non-Windows CI -->
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
 

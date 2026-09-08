@@ -1,4 +1,3 @@
-```csharp
 using System;
 using System.Text.Json.Serialization;
 
@@ -39,10 +38,10 @@ public class OutdoorStation
     {
         get
         {
-            string state = Enabled ? "Enabled" : "Disabled";
+            string state =
+                Enabled ? "Enabled" : "Disabled";
 
-            return $"{DisplayName}   |   {IpAddress}:{Port}   |   {state}";
+            return $"{DisplayName} | {IpAddress}:{Port} | {state}";
         }
     }
 }
-```

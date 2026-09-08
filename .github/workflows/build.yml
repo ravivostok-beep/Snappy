@@ -15,21 +15,49 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup .NET
+      - name: Setup .NET 10
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
 
+      - name: Find SNAPPY project
+        shell: pwsh
+        run: |
+          Write-Host "Searching for SNAPPY.csproj..."
+
+          $project = Get-ChildItem -Path . -Filter "SNAPPY.csproj" -Recurse |
+                     Select-Object -First 1
+
+          if ($null -eq $project) {
+              Write-Error "SNAPPY.csproj was not found."
+              Get-ChildItem -Path . -Recurse -Filter "*.csproj" |
+                  Select-Object FullName
+              exit 1
+          }
+
+          Write-Host "Project found:"
+          Write-Host $project.FullName
+
+          "SNAPPY_PROJECT=$($project.FullName)" >> $env:GITHUB_ENV
+
       - name: Restore
-        run: dotnet restore SNAPPY/SNAPPY.csproj
+        run: dotnet restore "$env:SNAPPY_PROJECT"
 
       - name: Build
-        run: dotnet build SNAPPY/SNAPPY.csproj --configuration Release --no-restore
+        run: dotnet build "$env:SNAPPY_PROJECT" --configuration Release --no-restore
 
       - name: Publish SNAPPY
-        run: dotnet publish SNAPPY/SNAPPY.csproj --configuration Release --runtime win-x64 --self-contained true --output publish/SNAPPY
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path publish/SNAPPY | Out-Null
 
-      - name: Upload SNAPPY EXE
+          dotnet publish "$env:SNAPPY_PROJECT" `
+            --configuration Release `
+            --runtime win-x64 `
+            --self-contained true `
+            --output publish/SNAPPY
+
+      - name: Upload SNAPPY Windows EXE
         uses: actions/upload-artifact@v4
         with:
           name: SNAPPY-Windows-x64

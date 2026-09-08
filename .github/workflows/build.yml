@@ -1,0 +1,48 @@
+name: Build SNAPPY
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Locate project
+        shell: pwsh
+        run: |
+          $project = Get-ChildItem -Path $env:GITHUB_WORKSPACE -Recurse -Filter "SNAPPY.csproj" |
+                     Select-Object -First 1
+          if (-not $project) {
+            Write-Error "SNAPPY.csproj not found."
+            Get-ChildItem -Path $env:GITHUB_WORKSPACE -Recurse -Filter "*.csproj" |
+              ForEach-Object { Write-Host $_.FullName }
+            exit 1
+          }
+          "PROJECT_PATH=$($project.FullName)" >> $env:GITHUB_ENV
+          Write-Host "Using $($project.FullName)"
+
+      - name: Restore
+        run: dotnet restore "$env:PROJECT_PATH"
+
+      - name: Build
+        run: dotnet build "$env:PROJECT_PATH" -c Release --no-restore
+
+      - name: Publish
+        run: dotnet publish "$env:PROJECT_PATH" -c Release -r win-x64 --self-contained true -o "${{ github.workspace }}\publish\SNAPPY"
+
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: SNAPPY-Windows-x64
+          path: publish/SNAPPY

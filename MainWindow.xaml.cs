@@ -1,74 +1,352 @@
+```csharp
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using SNAPPY.Models;
+using SNAPPY.Services;
 
 namespace SNAPPY;
 
 public partial class MainWindow : Window
 {
-    private readonly ObservableCollection<string> _stations = new();
+    private readonly ObservableCollection<OutdoorStation> _stations = new();
+
+    private readonly ConfigurationService _configurationService;
+
+    private readonly HikvisionTalkService _talkService;
+
+    private OutdoorStation? _selectedStation;
 
     public MainWindow()
     {
         InitializeComponent();
 
-        for (int i = 1; i <= 10; i++)
-            _stations.Add($"Outdoor {i:00}   |   Not configured");
+        _configurationService =
+            new ConfigurationService();
+
+        _talkService =
+            new HikvisionTalkService();
 
         OutdoorList.ItemsSource = _stations;
-    }
 
-    private void Window_Loaded(object sender, RoutedEventArgs e)
-    {
-        StatusText.Text = "READY";
-        FooterText.Text = "SNAPPY started successfully.";
-    }
+        _talkService.StateChanged +=
+            TalkService_StateChanged;
 
-    private async void AnswerButton_Click(object sender, RoutedEventArgs e)
-    {
-        await RunUiActionAsync("Answer");
-    }
-
-    private async void RejectButton_Click(object sender, RoutedEventArgs e)
-    {
-        await RunUiActionAsync("Reject");
-    }
-
-    private async void Unlock1Button_Click(object sender, RoutedEventArgs e)
-    {
-        await RunUiActionAsync("Unlock 1");
-    }
-
-    private async void Unlock2Button_Click(object sender, RoutedEventArgs e)
-    {
-        await RunUiActionAsync("Unlock 2");
-    }
-
-    private async Task RunUiActionAsync(string action)
-    {
         SetButtonsEnabled(false);
+    }
+
+    private async void Window_Loaded(
+        object sender,
+        RoutedEventArgs e)
+    {
         try
         {
-            FooterText.Text = $"{action}: ready for Hikvision SDK integration...";
-            await Task.Yield();
-            await Task.Delay(50);
+            StatusText.Text = "LOADING";
+
+            FooterText.Text =
+                "Loading outdoor station configuration...";
+
+            await LoadStationsAsync();
+
+            StatusText.Text = "READY";
+
+            FooterText.Text =
+                $"SNAPPY started successfully. {_stations.Count} outdoor stations loaded.";
         }
         catch (Exception ex)
         {
-            MessageBox.Show(ex.Message, "SNAPPY", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-        finally
-        {
-            SetButtonsEnabled(true);
+            StatusText.Text = "ERROR";
+
+            FooterText.Text =
+                "Unable to load configuration.";
+
+            MessageBox.Show(
+                ex.Message,
+                "SNAPPY",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
         }
     }
 
-    private void SetButtonsEnabled(bool enabled)
+    private async Task LoadStationsAsync()
+    {
+        var stations =
+            await _configurationService.LoadStationsAsync();
+
+        _stations.Clear();
+
+        foreach (OutdoorStation station in stations)
+        {
+            _stations.Add(station);
+        }
+    }
+
+    private async void OutdoorConfigButton_Click(
+        object sender,
+        RoutedEventArgs e)
+    {
+        try
+        {
+            var configWindow =
+                new OutdoorStationListWindow(
+                    _stations,
+                    _configurationService)
+                {
+                    Owner = this
+                };
+
+            bool? result =
+                configWindow.ShowDialog();
+
+            if (result == true)
+            {
+                await LoadStationsAsync();
+
+                _selectedStation = null;
+
+                SelectedStationText.Text =
+                    "No station selected";
+
+                SetButtonsEnabled(false);
+
+                FooterText.Text =
+                    "Outdoor station configuration updated.";
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(
+                ex.Message,
+                "SNAPPY",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+        }
+    }
+
+    private void OutdoorList_SelectionChanged(
+        object sender,
+        SelectionChangedEventArgs e)
+    {
+        _selectedStation =
+            OutdoorList.SelectedItem as OutdoorStation;
+
+        if (_selectedStation == null)
+        {
+            SelectedStationText.Text =
+                "No station selected";
+
+            SetButtonsEnabled(false);
+
+            return;
+        }
+
+        SelectedStationText.Text =
+            $"{_selectedStation.DisplayName}  |  {_selectedStation.IpAddress}";
+
+        _talkService.SelectStation(
+            _selectedStation);
+
+        SetButtonsEnabled(
+            _selectedStation.Enabled);
+
+        LiveVideoText.Text =
+            $"LIVE VIDEO\n{_selectedStation.DisplayName}";
+    }
+
+    private async void AnswerButton_Click(
+        object sender,
+        RoutedEventArgs e)
+    {
+        if (!EnsureStationSelected())
+            return;
+
+        try
+        {
+            await _talkService.CallAsync();
+        }
+        catch (Exception ex)
+        {
+            ShowError(ex);
+        }
+    }
+
+    private async void RejectButton_Click(
+        object sender,
+        RoutedEventArgs e)
+    {
+        try
+        {
+            await _talkService.RejectAsync();
+        }
+        catch (Exception ex)
+        {
+            ShowError(ex);
+        }
+    }
+
+    private async void TalkButton_Click(
+        object sender,
+        RoutedEventArgs e)
+    {
+        if (!EnsureStationSelected())
+            return;
+
+        try
+        {
+            if (_talkService.State ==
+                TalkState.Connected)
+            {
+                await _talkService.DisconnectAsync();
+            }
+            else
+            {
+                await _talkService.CallAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            ShowError(ex);
+        }
+    }
+
+    private async void Unlock1Button_Click(
+        object sender,
+        RoutedEventArgs e)
+    {
+        if (!EnsureStationSelected())
+            return;
+
+        try
+        {
+            await _talkService.UnlockAsync(1);
+        }
+        catch (Exception ex)
+        {
+            ShowError(ex);
+        }
+    }
+
+    private async void Unlock2Button_Click(
+        object sender,
+        RoutedEventArgs e)
+    {
+        if (!EnsureStationSelected())
+            return;
+
+        try
+        {
+            await _talkService.UnlockAsync(2);
+        }
+        catch (Exception ex)
+        {
+            ShowError(ex);
+        }
+    }
+
+    private void TalkService_StateChanged(
+        object? sender,
+        TalkStateChangedEventArgs e)
+    {
+        Dispatcher.Invoke(() =>
+        {
+            FooterText.Text = e.Message;
+
+            switch (e.State)
+            {
+                case TalkState.Idle:
+                    StatusText.Text = "READY";
+                    TalkButton.Content =
+                        "START TWO-WAY TALK";
+                    break;
+
+                case TalkState.Calling:
+                    StatusText.Text = "CALLING";
+                    TalkButton.Content =
+                        "CONNECTING...";
+                    break;
+
+                case TalkState.Connected:
+                    StatusText.Text = "TALKING";
+                    TalkButton.Content =
+                        "END TWO-WAY TALK";
+                    break;
+
+                case TalkState.Rejected:
+                    StatusText.Text = "REJECTED";
+                    TalkButton.Content =
+                        "START TWO-WAY TALK";
+                    break;
+
+                case TalkState.Disconnected:
+                    StatusText.Text = "READY";
+                    TalkButton.Content =
+                        "START TWO-WAY TALK";
+                    break;
+
+                case TalkState.Error:
+                    StatusText.Text = "ERROR";
+                    TalkButton.Content =
+                        "START TWO-WAY TALK";
+                    break;
+            }
+        });
+    }
+
+    private bool EnsureStationSelected()
+    {
+        if (_selectedStation != null)
+            return true;
+
+        MessageBox.Show(
+            "Please select an outdoor station first.",
+            "SNAPPY",
+            MessageBoxButton.OK,
+            MessageBoxImage.Warning);
+
+        return false;
+    }
+
+    private void SetButtonsEnabled(
+        bool enabled)
     {
         AnswerButton.IsEnabled = enabled;
         RejectButton.IsEnabled = enabled;
+        TalkButton.IsEnabled = enabled;
         Unlock1Button.IsEnabled = enabled;
         Unlock2Button.IsEnabled = enabled;
     }
+
+    private void ShowError(Exception ex)
+    {
+        StatusText.Text = "ERROR";
+
+        FooterText.Text =
+            ex.Message;
+
+        MessageBox.Show(
+            ex.Message,
+            "SNAPPY",
+            MessageBoxButton.OK,
+            MessageBoxImage.Error);
+    }
+
+    private void Window_Closing(
+        object? sender,
+        System.ComponentModel.CancelEventArgs e)
+    {
+        try
+        {
+            _talkService.DisconnectAsync()
+                .GetAwaiter()
+                .GetResult();
+        }
+        catch
+        {
+            // Do not prevent application shutdown.
+        }
+    }
 }
+```

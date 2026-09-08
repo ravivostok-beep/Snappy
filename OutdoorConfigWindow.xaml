@@ -1,4 +1,3 @@
-
 <Window x:Class="SNAPPY.OutdoorConfigWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -22,7 +21,6 @@
         </Grid.RowDefinitions>
 
         <!-- HEADER -->
-
         <StackPanel Grid.Row="0">
 
             <TextBlock Text="OUTDOOR STATION CONFIGURATION"
@@ -37,7 +35,6 @@
         </StackPanel>
 
         <!-- FORM -->
-
         <Grid Grid.Row="2">
 
             <Grid.ColumnDefinitions>
@@ -46,7 +43,6 @@
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
-
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -54,9 +50,9 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
-
             </Grid.RowDefinitions>
 
+            <!-- NAME -->
             <TextBlock Grid.Row="0"
                        Grid.Column="0"
                        Text="Station Name"
@@ -68,7 +64,7 @@
                      Grid.Column="1"
                      Margin="0,0,0,12"/>
 
-
+            <!-- IP -->
             <TextBlock Grid.Row="1"
                        Grid.Column="0"
                        Text="IP Address"
@@ -80,7 +76,7 @@
                      Grid.Column="1"
                      Margin="0,0,0,12"/>
 
-
+            <!-- PORT -->
             <TextBlock Grid.Row="2"
                        Grid.Column="0"
                        Text="Port"
@@ -92,7 +88,7 @@
                      Grid.Column="1"
                      Margin="0,0,0,12"/>
 
-
+            <!-- USERNAME -->
             <TextBlock Grid.Row="3"
                        Grid.Column="0"
                        Text="Username"
@@ -104,7 +100,7 @@
                      Grid.Column="1"
                      Margin="0,0,0,12"/>
 
-
+            <!-- PASSWORD -->
             <TextBlock Grid.Row="4"
                        Grid.Column="0"
                        Text="Password"
@@ -116,7 +112,7 @@
                          Grid.Column="1"
                          Margin="0,0,0,12"/>
 
-
+            <!-- DESCRIPTION -->
             <TextBlock Grid.Row="5"
                        Grid.Column="0"
                        Text="Description"
@@ -132,7 +128,7 @@
                      VerticalScrollBarVisibility="Auto"
                      Margin="0,0,0,12"/>
 
-
+            <!-- ENABLE -->
             <CheckBox x:Name="EnabledCheckBox"
                       Grid.Row="6"
                       Grid.Column="1"
@@ -144,7 +140,6 @@
         </Grid>
 
         <!-- BUTTONS -->
-
         <StackPanel Grid.Row="4"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right">
@@ -165,4 +160,3 @@
     </Grid>
 
 </Window>
-```

@@ -1,4 +1,4 @@
-```yaml
+```text
 name: Build SNAPPY
 
 on:

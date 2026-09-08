@@ -1,4 +1,3 @@
-```csharp
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,11 +36,14 @@ public class HikvisionTalkService
 
     private CancellationTokenSource? _talkCancellation;
 
-    public TalkState State { get; private set; } = TalkState.Idle;
+    public TalkState State { get; private set; } =
+        TalkState.Idle;
 
-    public event EventHandler<TalkStateChangedEventArgs>? StateChanged;
+    public event EventHandler<TalkStateChangedEventArgs>?
+        StateChanged;
 
-    public void SelectStation(OutdoorStation station)
+    public void SelectStation(
+        OutdoorStation station)
     {
         _station = station;
 
@@ -53,20 +55,29 @@ public class HikvisionTalkService
     public async Task CallAsync()
     {
         if (_station == null)
+        {
             throw new InvalidOperationException(
                 "Please select an outdoor station.");
+        }
 
         if (!_station.Enabled)
+        {
             throw new InvalidOperationException(
                 "The selected outdoor station is disabled.");
+        }
 
-        if (string.IsNullOrWhiteSpace(_station.IpAddress))
+        if (string.IsNullOrWhiteSpace(
+                _station.IpAddress))
+        {
             throw new InvalidOperationException(
                 "The selected outdoor station does not have an IP address.");
+        }
 
         _talkCancellation?.Cancel();
+        _talkCancellation?.Dispose();
 
-        _talkCancellation = new CancellationTokenSource();
+        _talkCancellation =
+            new CancellationTokenSource();
 
         ChangeState(
             TalkState.Calling,
@@ -75,22 +86,37 @@ public class HikvisionTalkService
         /*
          * IMPORTANT:
          *
-         * The actual Hikvision two-way audio SDK call belongs here.
+         * The actual Hikvision two-way audio SDK
+         * call belongs here.
          *
-         * Hikvision devices can use different communication mechanisms
-         * depending on the exact indoor/outdoor station model and SDK.
+         * Hikvision devices can use different
+         * communication mechanisms depending on
+         * the exact indoor/outdoor station model
+         * and SDK.
          *
-         * We deliberately do not fabricate undocumented native SDK
-         * function calls here.
+         * We deliberately do not fabricate
+         * undocumented native SDK function calls.
          *
-         * The rest of SNAPPY is already prepared for the real transport.
+         * The rest of SNAPPY is already prepared
+         * for the real transport.
          */
 
-        await Task.Delay(300, _talkCancellation.Token);
+        try
+        {
+            await Task.Delay(
+                300,
+                _talkCancellation.Token);
 
-        ChangeState(
-            TalkState.Connected,
-            $"Two-way talk connected to {_station.DisplayName}.");
+            ChangeState(
+                TalkState.Connected,
+                $"Two-way talk connected to {_station.DisplayName}.");
+        }
+        catch (OperationCanceledException)
+        {
+            ChangeState(
+                TalkState.Disconnected,
+                "Two-way talk cancelled.");
+        }
     }
 
     public Task RejectAsync()
@@ -114,15 +140,21 @@ public class HikvisionTalkService
     public Task UnlockAsync(int relay)
     {
         if (_station == null)
+        {
             throw new InvalidOperationException(
                 "Please select an outdoor station.");
+        }
 
         if (relay is not 1 and not 2)
-            throw new ArgumentOutOfRangeException(nameof(relay));
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(relay));
+        }
 
         /*
-         * Actual Hikvision relay/unlock SDK command will be connected
-         * here once the exact Hikvision SDK/device API is supplied.
+         * Actual Hikvision relay/unlock SDK command
+         * will be connected here once the exact
+         * Hikvision SDK/device API is supplied.
          */
 
         ChangeState(
@@ -142,7 +174,9 @@ public class HikvisionTalkService
 
         _talkCancellation = null;
 
-        ChangeState(state, message);
+        ChangeState(
+            state,
+            message);
     }
 
     private void ChangeState(
@@ -158,4 +192,3 @@ public class HikvisionTalkService
                 message));
     }
 }
-```

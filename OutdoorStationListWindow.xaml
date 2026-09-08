@@ -1,4 +1,3 @@
-
 <Window x:Class="SNAPPY.OutdoorStationListWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -22,7 +21,6 @@
         </Grid.RowDefinitions>
 
         <!-- HEADER -->
-
         <DockPanel Grid.Row="0">
 
             <StackPanel DockPanel.Dock="Left">
@@ -45,9 +43,7 @@
 
         </DockPanel>
 
-
         <!-- LIST -->
-
         <ListBox x:Name="StationList"
                  Grid.Row="2"
                  Background="#181818"
@@ -103,9 +99,7 @@
 
         </ListBox>
 
-
         <!-- BOTTOM -->
-
         <StackPanel Grid.Row="4"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right">
@@ -132,4 +126,3 @@
     </Grid>
 
 </Window>
-```

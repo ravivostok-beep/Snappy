@@ -1,4 +1,3 @@
-```csharp
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
@@ -146,4 +145,3 @@ public partial class OutdoorStationListWindow : Window
         DialogResult = true;
     }
 }
-```

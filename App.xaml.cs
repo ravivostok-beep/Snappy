@@ -1,5 +1,5 @@
-```csharp
 using System;
+using System.Threading;
 using System.Windows;
 
 namespace SNAPPY;
@@ -45,4 +45,3 @@ public partial class App : Application
         base.OnStartup(e);
     }
 }
-```

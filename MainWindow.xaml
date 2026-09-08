@@ -1,0 +1,70 @@
+<Window x:Class="SNAPPY.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="SNAPPY - Hikvision Indoor Station" Height="720" Width="1200"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0" Margin="0,0,0,12">
+            <TextBlock Text="SNAPPY" FontSize="30" FontWeight="Bold"/>
+            <TextBlock Text="  Hikvision Indoor Intercom" FontSize="18"
+                       VerticalAlignment="Center" Margin="12,0,0,0"/>
+            <TextBlock x:Name="StatusText" Text="● Ready" DockPanel.Dock="Right"
+                       FontSize="16" VerticalAlignment="Center"/>
+        </DockPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2.4*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" BorderBrush="Gray" BorderThickness="1"
+                    CornerRadius="8" Margin="0,0,12,0">
+                <Grid Background="Black">
+                    <TextBlock Text="RTSP LIVE VIDEO" Foreground="White"
+                               FontSize="24" HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
+
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="Outdoor Stations" FontSize="22" FontWeight="Bold"/>
+                <ListBox x:Name="OutdoorList" Height="330" Margin="0,10,0,10">
+                    <ListBoxItem Content="Outdoor 01 - Main Gate"/>
+                    <ListBoxItem Content="Outdoor 02 - Gate 2"/>
+                    <ListBoxItem Content="Outdoor 03 - Reception"/>
+                    <ListBoxItem Content="Outdoor 04 - Parking"/>
+                    <ListBoxItem Content="Outdoor 05 - Warehouse"/>
+                    <ListBoxItem Content="Outdoor 06 - Building A"/>
+                    <ListBoxItem Content="Outdoor 07 - Building B"/>
+                    <ListBoxItem Content="Outdoor 08 - Staff Entrance"/>
+                    <ListBoxItem Content="Outdoor 09 - Loading Area"/>
+                    <ListBoxItem Content="Outdoor 10 - Back Gate"/>
+                </ListBox>
+
+                <WrapPanel>
+                    <Button Content="ANSWER" Width="110" Height="45" Margin="3"
+                            Click="Answer_Click"/>
+                    <Button Content="REJECT" Width="110" Height="45" Margin="3"
+                            Click="Reject_Click"/>
+                    <Button Content="UNLOCK 1" Width="110" Height="45" Margin="3"
+                            Click="Unlock1_Click"/>
+                    <Button Content="UNLOCK 2" Width="110" Height="45" Margin="3"
+                            Click="Unlock2_Click"/>
+                </WrapPanel>
+
+                <Button Content="DEVICE SETTINGS" Height="42" Margin="3,15,3,0"
+                        Click="Settings_Click"/>
+            </StackPanel>
+        </Grid>
+
+        <TextBlock Grid.Row="2" Text="SNAPPY | Windows Hikvision Intercom Client"
+                   HorizontalAlignment="Center" Margin="0,12,0,0"/>
+    </Grid>
+</Window>

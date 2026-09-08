@@ -1,7 +1,6 @@
-```text
 name: Build SNAPPY
 
-on:
+"on":
   push:
     branches:
       - main
@@ -19,7 +18,7 @@ jobs:
       - name: Setup .NET 10
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.0.x'
+          dotnet-version: "10.0.x"
 
       - name: Verify .NET
         shell: pwsh
@@ -76,7 +75,6 @@ jobs:
         shell: pwsh
         run: |
           Write-Host "Published files:"
-
           Get-ChildItem `
             "${{ github.workspace }}\publish\SNAPPY" `
             -Recurse |
@@ -88,4 +86,3 @@ jobs:
           name: SNAPPY-Windows-x64
           path: publish/SNAPPY
           if-no-files-found: error
-```

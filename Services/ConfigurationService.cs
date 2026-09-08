@@ -1,4 +1,3 @@
-```csharp
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,6 +10,7 @@ namespace SNAPPY.Services;
 public class ConfigurationService
 {
     private readonly string _configurationDirectory;
+
     private readonly string _configurationFile;
 
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -21,13 +21,16 @@ public class ConfigurationService
 
     public ConfigurationService()
     {
-        _configurationDirectory = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-            "SNAPPY");
+        _configurationDirectory =
+            Path.Combine(
+                Environment.GetFolderPath(
+                    Environment.SpecialFolder.CommonApplicationData),
+                "SNAPPY");
 
-        _configurationFile = Path.Combine(
-            _configurationDirectory,
-            "outdoor-stations.json");
+        _configurationFile =
+            Path.Combine(
+                _configurationDirectory,
+                "outdoor-stations.json");
     }
 
     public async Task<List<OutdoorStation>> LoadStationsAsync()
@@ -39,17 +42,22 @@ public class ConfigurationService
                 return CreateDefaultStations();
             }
 
-            string json = await File.ReadAllTextAsync(_configurationFile);
+            string json =
+                await File.ReadAllTextAsync(
+                    _configurationFile);
 
             if (string.IsNullOrWhiteSpace(json))
+            {
                 return CreateDefaultStations();
+            }
 
             List<OutdoorStation>? stations =
                 JsonSerializer.Deserialize<List<OutdoorStation>>(
                     json,
                     JsonOptions);
 
-            return stations ?? CreateDefaultStations();
+            return stations ??
+                   CreateDefaultStations();
         }
         catch
         {
@@ -60,11 +68,13 @@ public class ConfigurationService
     public async Task SaveStationsAsync(
         IEnumerable<OutdoorStation> stations)
     {
-        Directory.CreateDirectory(_configurationDirectory);
+        Directory.CreateDirectory(
+            _configurationDirectory);
 
-        string json = JsonSerializer.Serialize(
-            stations,
-            JsonOptions);
+        string json =
+            JsonSerializer.Serialize(
+                stations,
+                JsonOptions);
 
         await File.WriteAllTextAsync(
             _configurationFile,
@@ -73,18 +83,19 @@ public class ConfigurationService
 
     private static List<OutdoorStation> CreateDefaultStations()
     {
-        var result = new List<OutdoorStation>();
+        var result =
+            new List<OutdoorStation>();
 
         for (int i = 1; i <= 10; i++)
         {
-            result.Add(new OutdoorStation
-            {
-                Name = $"Outdoor {i:00}",
-                Enabled = false
-            });
+            result.Add(
+                new OutdoorStation
+                {
+                    Name = $"Outdoor {i:00}",
+                    Enabled = false
+                });
         }
 
         return result;
     }
 }
-```

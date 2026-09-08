@@ -1,4 +1,4 @@
-```xml
+
 <Window x:Class="SNAPPY.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

@@ -18,31 +18,77 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
-      - name: Locate project
+      - name: Verify .NET
         shell: pwsh
         run: |
-          $project = Get-ChildItem -Path $env:GITHUB_WORKSPACE -Recurse -Filter "SNAPPY.csproj" |
-                     Select-Object -First 1
+          dotnet --info
+          dotnet --list-sdks
+
+      - name: Locate SNAPPY project
+        shell: pwsh
+        run: |
+          $project = Get-ChildItem `
+            -Path $env:GITHUB_WORKSPACE `
+            -Recurse `
+            -Filter "SNAPPY.csproj" |
+            Select-Object -First 1
+
           if (-not $project) {
             Write-Error "SNAPPY.csproj not found."
-            Get-ChildItem -Path $env:GITHUB_WORKSPACE -Recurse -Filter "*.csproj" |
-              ForEach-Object { Write-Host $_.FullName }
+
+            Get-ChildItem `
+              -Path $env:GITHUB_WORKSPACE `
+              -Recurse `
+              -Filter "*.csproj" |
+              ForEach-Object {
+                Write-Host $_.FullName
+              }
+
             exit 1
           }
+
           "PROJECT_PATH=$($project.FullName)" >> $env:GITHUB_ENV
-          Write-Host "Using $($project.FullName)"
+
+          Write-Host "Using project:"
+          Write-Host $project.FullName
 
       - name: Restore
-        run: dotnet restore "$env:PROJECT_PATH"
+        shell: pwsh
+        run: |
+          dotnet restore "$env:PROJECT_PATH"
 
       - name: Build
-        run: dotnet build "$env:PROJECT_PATH" -c Release --no-restore
+        shell: pwsh
+        run: |
+          dotnet build `
+            "$env:PROJECT_PATH" `
+            -c Release `
+            --no-restore `
+            --framework net10.0-windows10.0.17763.0
 
       - name: Publish
-        run: dotnet publish "$env:PROJECT_PATH" -c Release -r win-x64 --self-contained true -o "${{ github.workspace }}\publish\SNAPPY"
+        shell: pwsh
+        run: |
+          dotnet publish `
+            "$env:PROJECT_PATH" `
+            -c Release `
+            -f net10.0-windows10.0.17763.0 `
+            -r win-x64 `
+            --self-contained true `
+            -o "${{ github.workspace }}\publish\SNAPPY"
 
-      - name: Upload EXE
+      - name: Verify Published Files
+        shell: pwsh
+        run: |
+          Write-Host "Published files:"
+          Get-ChildItem `
+            "${{ github.workspace }}\publish\SNAPPY" `
+            -Recurse |
+            Select-Object FullName, Length
+
+      - name: Upload SNAPPY
         uses: actions/upload-artifact@v4
         with:
           name: SNAPPY-Windows-x64
           path: publish/SNAPPY
+          if-no-files-found: error

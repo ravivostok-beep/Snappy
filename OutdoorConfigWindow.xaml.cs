@@ -1,4 +1,3 @@
-using System;
 using System.Windows;
 using SNAPPY.Models;
 
@@ -8,7 +7,9 @@ public partial class OutdoorConfigWindow : Window
 {
     private readonly OutdoorStation _station;
 
-    public OutdoorStation Station => _station;
+    public OutdoorStation Station =>
+        _station;
+
 
     public OutdoorConfigWindow(
         OutdoorStation station)
@@ -20,29 +21,39 @@ public partial class OutdoorConfigWindow : Window
         LoadStation();
     }
 
+
     private void LoadStation()
     {
-        NameTextBox.Text = _station.Name;
+        NameTextBox.Text =
+            _station.Name;
 
-        IpTextBox.Text = _station.IpAddress;
+
+        IpTextBox.Text =
+            _station.IpAddress;
+
 
         PortTextBox.Text =
             _station.Port > 0
                 ? _station.Port.ToString()
-                : "8000";
+                : "80";
+
 
         UsernameTextBox.Text =
             _station.Username;
 
+
         PasswordTextBox.Password =
             _station.Password;
+
 
         DescriptionTextBox.Text =
             _station.Description;
 
+
         EnabledCheckBox.IsChecked =
             _station.Enabled;
     }
+
 
     private void SaveButton_Click(
         object sender,
@@ -51,17 +62,22 @@ public partial class OutdoorConfigWindow : Window
         string name =
             NameTextBox.Text.Trim();
 
+
         string ip =
             IpTextBox.Text.Trim();
+
 
         string username =
             UsernameTextBox.Text.Trim();
 
+
         string password =
             PasswordTextBox.Password;
 
+
         string description =
             DescriptionTextBox.Text.Trim();
+
 
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -76,6 +92,7 @@ public partial class OutdoorConfigWindow : Window
             return;
         }
 
+
         if (string.IsNullOrWhiteSpace(ip))
         {
             MessageBox.Show(
@@ -88,6 +105,7 @@ public partial class OutdoorConfigWindow : Window
 
             return;
         }
+
 
         if (!int.TryParse(
                 PortTextBox.Text.Trim(),
@@ -106,28 +124,106 @@ public partial class OutdoorConfigWindow : Window
             return;
         }
 
-        _station.Name = name;
 
-        _station.IpAddress = ip;
+        /*
+         * DS-K1T502DBFWX-C:
+         *
+         * ISAPI:
+         * HTTP  = 80
+         * HTTPS = 443
+         *
+         * Port 8000 is normally the Hikvision SDK
+         * service port and is NOT used by the
+         * ISAPI unlock command.
+         */
+        if (port != 80 &&
+            port != 443)
+        {
+            MessageBoxResult result =
+                MessageBox.Show(
+                    "For the DS-K1T502DBFWX-C ISAPI door unlock, " +
+                    "the normal ports are 80 (HTTP) or 443 (HTTPS).\n\n" +
+                    $"You entered port {port}.\n\n" +
+                    "Do you want to save this port anyway?",
+                    "SNAPPY",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
 
-        _station.Port = port;
+            if (result != MessageBoxResult.Yes)
+            {
+                PortTextBox.Focus();
 
-        _station.Username = username;
+                return;
+            }
+        }
 
-        _station.Password = password;
 
-        _station.Description = description;
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            MessageBox.Show(
+                "Please enter the Hikvision username.",
+                "SNAPPY",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+
+            UsernameTextBox.Focus();
+
+            return;
+        }
+
+
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            MessageBox.Show(
+                "Please enter the Hikvision password.",
+                "SNAPPY",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+
+            PasswordTextBox.Focus();
+
+            return;
+        }
+
+
+        _station.Name =
+            name;
+
+
+        _station.IpAddress =
+            ip;
+
+
+        _station.Port =
+            port;
+
+
+        _station.Username =
+            username;
+
+
+        _station.Password =
+            password;
+
+
+        _station.Description =
+            description;
+
 
         _station.Enabled =
             EnabledCheckBox.IsChecked == true;
 
-        DialogResult = true;
+
+        DialogResult =
+            true;
     }
+
 
     private void CancelButton_Click(
         object sender,
         RoutedEventArgs e)
     {
-        DialogResult = false;
+        DialogResult =
+            false;
     }
 }

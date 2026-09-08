@@ -1,3 +1,4 @@
+```xml
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
@@ -26,14 +27,15 @@
     <!-- Windows runtime -->
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
 
-    <!-- Self-contained EXE -->
+    <!-- Self-contained -->
     <SelfContained>true</SelfContained>
 
-    <!-- Keep false for now -->
+    <!-- Keep false -->
     <PublishSingleFile>false</PublishSingleFile>
 
-    <!-- Required when building Windows target on non-Windows CI -->
+    <!-- Required for CI -->
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
 
 </Project>
+```

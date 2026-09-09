@@ -12,13 +12,11 @@ public partial class MainWindow : Window
 {
 private readonly OutdoorStation _station;
 private readonly HikvisionIsapiService _hikvision;
-
-```
 private readonly LibVLC _libVlc;
 private readonly MediaPlayer _mediaPlayer;
-
 private readonly DispatcherTimer _timer;
 
+```
 private bool _callActive;
 
 public MainWindow()
@@ -33,7 +31,6 @@ public MainWindow()
         _station.Username,
         _station.Password);
 
-    // Initialize LibVLC.
     Core.Initialize();
 
     _libVlc = new LibVLC(
@@ -85,8 +82,6 @@ private async Task StartVideoAsync()
             _libVlc,
             new Uri(_station.RtspUrl));
 
-        // LibVLCSharp 3.10.x uses Play(Media),
-        // not MediaPlayer.PlayAsync().
         var started = _mediaPlayer.Play(media);
 
         if (started)
@@ -98,7 +93,8 @@ private async Task StartVideoAsync()
         }
         else
         {
-            StatusText.Text = "RTSP START FAILED";
+            StatusText.Text =
+                "RTSP START FAILED";
 
             FooterText.Text =
                 "LibVLC could not start the RTSP stream.";
@@ -172,7 +168,6 @@ private static bool IsCallActive(string raw)
     var text =
         raw.ToLowerInvariant();
 
-    // Inactive states.
     if (text.Contains("idle") ||
         text.Contains("inactive") ||
         text.Contains("\"status\":0") ||
@@ -181,7 +176,6 @@ private static bool IsCallActive(string raw)
         return false;
     }
 
-    // Active call states.
     return text.Contains("ring") ||
            text.Contains("calling") ||
            text.Contains("incoming") ||

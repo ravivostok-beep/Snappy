@@ -16,7 +16,7 @@ private readonly LibVLC _libVlc;
 private readonly MediaPlayer _mediaPlayer;
 private readonly DispatcherTimer _timer;
 
-```
+
 private bool _callActive;
 
 public MainWindow()
@@ -328,6 +328,6 @@ private void Cleanup()
     {
     }
 }
-```
+
 
 }

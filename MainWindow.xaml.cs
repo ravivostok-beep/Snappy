@@ -118,8 +118,8 @@ public partial class MainWindow : Window
 
         if (t.Contains("idle") ||
             t.Contains("inactive") ||
-            t.Contains(""status":0") ||
-            t.Contains(""status":"0""))
+            t.Contains("\"status\":0") ||
+            t.Contains("\"status\":\"0\""))
             return false;
 
         return t.Contains("ring") ||

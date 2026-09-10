@@ -16,6 +16,8 @@ public sealed class OutdoorStation
     public string RoomNumber { get; set; } = "101";
     public string ExtensionName { get; set; } = "INDOOR EXTENSION 01";
     public string ExtensionNumber { get; set; } = "1";
+    public int TwoWayAudioChannel { get; set; } = 1;
+    public bool TwoWayAudioEnabled { get; set; } = true;
 
     public string RtspUrl
     {

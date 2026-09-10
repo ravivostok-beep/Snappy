@@ -7,12 +7,18 @@ public partial class App : Application
 {
     protected override void OnStartup(StartupEventArgs e)
     {
-        DispatcherUnhandledException += (_, a) =>
+        DispatcherUnhandledException += (_, args) =>
         {
-            MessageBox.Show(a.Exception.Message, "SNAPPY Error",
-                MessageBoxButton.OK, MessageBoxImage.Error);
-            a.Handled = true;
+            MessageBox.Show(args.Exception.Message, "SNAPPY Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            args.Handled = true;
         };
+
+        AppDomain.CurrentDomain.UnhandledException += (_, args) =>
+        {
+            if (args.ExceptionObject is Exception ex)
+                MessageBox.Show(ex.Message, "SNAPPY Fatal Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        };
+
         base.OnStartup(e);
     }
 }

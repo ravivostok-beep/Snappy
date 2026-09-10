@@ -19,17 +19,17 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="270" />
+            <ColumnDefinition Width="290" />
         </Grid.ColumnDefinitions>
 
         <Border Grid.Row="0" Grid.ColumnSpan="3" Background="#171C23" CornerRadius="12" Padding="18,10" Margin="0,0,0,10">
             <DockPanel>
                 <StackPanel DockPanel.Dock="Left">
                     <TextBlock Text="SNAPPY" FontSize="25" FontWeight="Bold" />
-                    <TextBlock Text="INDOOR CALL STATION" Foreground="#8D99A8" FontSize="11" Margin="1,1,0,0" />
+                    <TextBlock x:Name="IndoorHeaderText" Text="ROOM 101 • INDOOR CALL STATION" Foreground="#8D99A8" FontSize="11" Margin="1,1,0,0" />
                 </StackPanel>
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="ROOM 101" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,18,0" />
+                    <TextBlock x:Name="RoomHeaderText" Text="101" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,18,0" />
                     <Button Content="CONFIGURATION" Click="ConfigurationButton_Click" Padding="16,9" Background="#263241" Foreground="White" BorderThickness="0" />
                 </StackPanel>
             </DockPanel>
@@ -40,6 +40,7 @@
                 <StackPanel DockPanel.Dock="Top">
                     <TextBlock Text="OUTDOOR STATIONS" FontWeight="Bold" FontSize="14" />
                     <TextBlock x:Name="StationCountText" Text="9 configured" Foreground="#7F8B99" FontSize="11" Margin="0,3,0,10" />
+                    <TextBlock x:Name="StationMappingHint" Text="Each configured station monitors the configured indoor room" Foreground="#657180" FontSize="10" Margin="0,0,0,10" TextWrapping="Wrap" />
                 </StackPanel>
                 <ListBox x:Name="OutdoorStationsList" SelectionChanged="OutdoorStationsList_SelectionChanged" Background="Transparent" BorderThickness="0" Foreground="White">
                     <ListBox.ItemContainerStyle>
@@ -73,9 +74,19 @@
             <StackPanel>
                 <TextBlock Text="CALL STATUS" FontSize="13" FontWeight="Bold" />
                 <TextBlock x:Name="CallStateText" Text="NO ACTIVE CALL" FontSize="23" FontWeight="Bold" Margin="0,6,0,18" />
+
+                <Border Background="#202832" CornerRadius="8" Padding="10" Margin="0,0,0,14">
+                    <StackPanel>
+                        <TextBlock Text="CALL SEQUENCE" Foreground="#7F8B99" FontSize="10" />
+                        <TextBlock x:Name="CallSequenceText" Text="101  →  CALL" FontSize="18" FontWeight="Bold" Margin="0,3,0,0" />
+                        <TextBlock Text="SNAPPY RING → ANSWER" Foreground="#72E0A5" FontSize="11" Margin="0,2,0,0" />
+                    </StackPanel>
+                </Border>
+
                 <TextBlock Text="MAPPING" Foreground="#7F8B99" FontSize="11" />
                 <TextBlock x:Name="MappingText" TextWrapping="Wrap" Margin="0,5,0,18" Foreground="#D6DCE4" />
                 <Separator Margin="0,0,0,15" />
+
                 <Button Content="ANSWER" Click="AnswerButton_Click" Height="42" Margin="0,0,0,8" Background="#1F9D61" Foreground="White" BorderThickness="0" FontWeight="Bold" />
                 <Button Content="REJECT" Click="RejectButton_Click" Height="42" Margin="0,0,0,8" Background="#A43D45" Foreground="White" BorderThickness="0" FontWeight="Bold" />
                 <Button Content="HANG UP" Click="HangupButton_Click" Height="42" Margin="0,0,0,8" Background="#394454" Foreground="White" BorderThickness="0" FontWeight="Bold" />
@@ -87,9 +98,9 @@
             <DockPanel>
                 <StackPanel DockPanel.Dock="Left">
                     <TextBlock Text="SYSTEM" Foreground="#7F8B99" FontSize="10" />
-                    <TextBlock x:Name="FooterText" Text="Waiting for an incoming call..." FontSize="12" Margin="0,3,0,0" />
+                    <TextBlock x:Name="FooterText" Text="Waiting for a physical call on any configured Outdoor Station..." FontSize="12" Margin="0,3,0,0" TextWrapping="Wrap" />
                 </StackPanel>
-                <TextBlock DockPanel.Dock="Right" Text="MAX 9 OUTDOOR STATIONS" Foreground="#6F7B89" VerticalAlignment="Center" FontSize="10" />
+                <TextBlock DockPanel.Dock="Right" x:Name="FooterMappingText" Text="MAX 9 OUTDOOR STATIONS" Foreground="#6F7B89" VerticalAlignment="Center" FontSize="10" />
             </DockPanel>
         </Border>
     </Grid>

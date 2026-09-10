@@ -1,64 +1,64 @@
-# SNAPPY Indoor Call Station
+# SNAPPY - Indoor Room 101 + Outdoor Intercom Configuration
 
-SNAPPY is a .NET 10 WPF Windows application for an indoor call-station workflow with up to 9 configured outdoor stations.
+## Workflow
 
-## Main workflow
+The intended call workflow is:
 
-1. A caller selects room **101** on an outdoor station.
-2. The caller presses the physical **CALL** button.
-3. SNAPPY polls the configured outdoor stations for an active intercom call.
-4. SNAPPY identifies the outdoor station that is calling.
-5. SNAPPY automatically selects that station.
-6. The live camera from the calling station is displayed.
-7. SNAPPY shows an incoming-call banner and audible ring notification.
-8. The operator can use ANSWER, REJECT, HANG UP and UNLOCK DOOR.
+1. Visitor enters the configured room number on an Outdoor Station.
+2. For the default configuration this is `1` → `0` → `1` → Call.
+3. SNAPPY polls the configured Outdoor Stations for the intercom call status.
+4. When an active call is detected, SNAPPY can automatically select the calling Outdoor Station.
+5. SNAPPY rings the Windows operator and shows the caller Outdoor camera.
+6. Operator presses `ANSWER`.
+7. SNAPPY sends the device answer command.
+8. If enabled, SNAPPY sends the configured two-way-audio channel open command.
+9. Operator can `HANG UP`, `REJECT`, or `UNLOCK DOOR` when enabled.
 
-## Supported station count
+## Indoor configuration
 
-Maximum: **9 Outdoor Stations**.
+SNAPPY now has a dedicated Indoor Room configuration:
 
-Default addresses:
+- Indoor Name: `MAIN INDOOR`
+- Room Number: `101`
+- Extension Name: `INDOOR EXTENSION 01`
+- Extension Number: `1`
+- Default Two-Way Audio Channel: `1`
+- Auto-select calling Outdoor: enabled by default
+- Open two-way-audio command after Answer: enabled by default
+- Door unlock: enabled by default
 
-- OUTDOOR 01 - 192.168.0.65
-- OUTDOOR 02 - 192.168.0.66
-- OUTDOOR 03 - 192.168.0.67
-- OUTDOOR 04 - 192.168.0.68
-- OUTDOOR 05 - 192.168.0.69
-- OUTDOOR 06 - 192.168.0.70
-- OUTDOOR 07 - 192.168.0.71
-- OUTDOOR 08 - 192.168.0.72
-- OUTDOOR 09 - 192.168.0.73
+Indoor settings are saved to:
 
-Default mapping:
+`%AppData%\\SNAPPY\\indoor-room.json`
 
-- Device model: DS-K1T502DBFWX-C
-- Main indoor: MAIN INDOOR
-- Room: 101
-- Extension: INDOOR EXTENSION 01
-- Extension number: 1
-- HTTP/ISAPI: 80
-- RTSP: 554
-
-## Configuration
-
-Open **CONFIGURATION** from the main window. Settings are saved to:
+Outdoor settings are saved to:
 
 `%AppData%\\SNAPPY\\outdoor-stations.json`
 
-After saving a changed IP, username or password, restart SNAPPY so the network service connections are recreated.
+## Outdoor configuration
+
+Up to 9 Outdoor Stations can be configured. Each station has:
+
+- Name
+- IP address
+- HTTP port
+- RTSP port
+- Username/password
+- Room mapping
+- Extension number
+- Two-way-audio channel
+- Two-way-audio enable/disable
+
+The default Outdoor IP addresses are `192.168.0.65` through `192.168.0.73`.
+
+## Important two-way-audio note
+
+The project sends the device's ISAPI call answer and two-way-audio channel commands. The actual bidirectional audio media transport is firmware/device dependent. RTSP provides the camera video stream; it does not itself provide microphone-to-speaker intercom audio. If the device requires the vendor audio SDK/media transport for the audio payload, that SDK must be integrated for full PC microphone and speaker audio.
+
+This project deliberately does not expose or require a separate SIP account/server configuration.
 
 ## Build
 
-Target framework: `.NET 10 WPF`
+GitHub Actions uses .NET 10, Windows x64, self-contained publishing, and the WPF target `net10.0-windows10.0.17763.0`.
 
-Minimum Windows target: `10.0.17763.0`
-
-Architecture: `x64`
-
-Runtime: `win-x64`
-
-Self-contained publish is enabled.
-
-## Important
-
-The exact call-control behavior depends on the firmware capabilities of the installed devices. SNAPPY uses the device VideoIntercom ISAPI endpoints for call status, call signaling and door control. The application does not expose a separate manual SIP-account configuration screen.
+No Markdown code fences are required inside source files.

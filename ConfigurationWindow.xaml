@@ -1,64 +1,112 @@
 <Window x:Class="SNAPPY.ConfigurationWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="SNAPPY - Outdoor Station Configuration"
-        Width="1180"
-        Height="760"
+        Title="SNAPPY - Indoor Room &amp; Outdoor Configuration"
+        Width="1320"
+        Height="820"
         Background="#101318"
         Foreground="#F4F7FA"
         WindowStartupLocation="CenterOwner">
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <StackPanel Margin="0,0,0,12">
-            <TextBlock Text="OUTDOOR STATION CONFIGURATION" FontSize="23" FontWeight="Bold" />
-            <TextBlock Text="Maximum 9 stations • settings are saved locally on this PC" Foreground="#7F8B99" Margin="0,4,0,0" />
+            <TextBlock Text="INDOOR ROOM + OUTDOOR CONFIGURATION" FontSize="23" FontWeight="Bold" />
+            <TextBlock Text="Configure Room 101 as the SNAPPY indoor endpoint and map up to 9 outdoor stations for the call and two-way-audio workflow." Foreground="#7F8B99" Margin="0,4,0,0" TextWrapping="Wrap" />
         </StackPanel>
 
-        <Border Grid.Row="1" Background="#171C23" CornerRadius="12" Padding="12">
+        <Border Grid.Row="1" Background="#171C23" CornerRadius="12" Padding="14" Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="170" />
+                    <ColumnDefinition Width="170" />
+                    <ColumnDefinition Width="210" />
+                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="170" />
+                    <ColumnDefinition Width="210" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                    <TextBlock Text="INDOOR NAME" Foreground="#7F8B99" FontSize="10" />
+                    <TextBox x:Name="IndoorNameBox" Margin="0,4,0,0" Padding="7" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Margin="0,0,10,0">
+                    <TextBlock Text="ROOM NUMBER" Foreground="#7F8B99" FontSize="10" />
+                    <TextBox x:Name="RoomNumberBox" Margin="0,4,0,0" Padding="7" />
+                </StackPanel>
+                <StackPanel Grid.Column="2" Margin="0,0,10,0">
+                    <TextBlock Text="EXTENSION NAME" Foreground="#7F8B99" FontSize="10" />
+                    <TextBox x:Name="ExtensionNameBox" Margin="0,4,0,0" Padding="7" />
+                </StackPanel>
+                <StackPanel Grid.Column="3" Margin="0,0,10,0">
+                    <TextBlock Text="EXTENSION NO." Foreground="#7F8B99" FontSize="10" />
+                    <TextBox x:Name="ExtensionNumberBox" Margin="0,4,0,0" Padding="7" />
+                </StackPanel>
+                <StackPanel Grid.Column="4" Margin="0,0,10,0">
+                    <TextBlock Text="AUDIO CHANNEL" Foreground="#7F8B99" FontSize="10" />
+                    <TextBox x:Name="DefaultAudioChannelBox" Margin="0,4,0,0" Padding="7" />
+                </StackPanel>
+                <StackPanel Grid.Column="5" Margin="0,0,10,0" VerticalAlignment="Bottom">
+                    <CheckBox x:Name="AutoSelectCheckBox" Content="AUTO-SELECT CALLING OUTDOOR" IsChecked="True" Margin="0,2" />
+                    <CheckBox x:Name="AutoAudioCheckBox" Content="OPEN TWO-WAY AUDIO ON ANSWER" IsChecked="True" Margin="0,6,0,0" />
+                </StackPanel>
+                <CheckBox Grid.Column="6" x:Name="DoorUnlockCheckBox" Content="ENABLE DOOR UNLOCK" IsChecked="True" VerticalAlignment="Bottom" Margin="0,0,0,8" />
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="2" Background="#171C23" CornerRadius="12" Padding="10">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="55" />
-                    <ColumnDefinition Width="150" />
-                    <ColumnDefinition Width="150" />
-                    <ColumnDefinition Width="80" />
-                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="48" />
                     <ColumnDefinition Width="130" />
-                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="135" />
+                    <ColumnDefinition Width="65" />
+                    <ColumnDefinition Width="65" />
+                    <ColumnDefinition Width="115" />
+                    <ColumnDefinition Width="145" />
+                    <ColumnDefinition Width="75" />
+                    <ColumnDefinition Width="95" />
+                    <ColumnDefinition Width="95" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-
                 <TextBlock Grid.Column="0" Text="#" Foreground="#7F8B99" Margin="5" />
-                <TextBlock Grid.Column="1" Text="NAME" Foreground="#7F8B99" Margin="5" />
+                <TextBlock Grid.Column="1" Text="OUTDOOR NAME" Foreground="#7F8B99" Margin="5" />
                 <TextBlock Grid.Column="2" Text="IP ADDRESS" Foreground="#7F8B99" Margin="5" />
                 <TextBlock Grid.Column="3" Text="HTTP" Foreground="#7F8B99" Margin="5" />
                 <TextBlock Grid.Column="4" Text="RTSP" Foreground="#7F8B99" Margin="5" />
                 <TextBlock Grid.Column="5" Text="USERNAME" Foreground="#7F8B99" Margin="5" />
                 <TextBlock Grid.Column="6" Text="PASSWORD" Foreground="#7F8B99" Margin="5" />
-                <TextBlock Grid.Column="7" Text="STATUS" Foreground="#7F8B99" Margin="5" />
+                <TextBlock Grid.Column="7" Text="ROOM" Foreground="#7F8B99" Margin="5" />
+                <TextBlock Grid.Column="8" Text="EXT. NO." Foreground="#7F8B99" Margin="5" />
+                <TextBlock Grid.Column="9" Text="AUDIO CH." Foreground="#7F8B99" Margin="5" />
+                <TextBlock Grid.Column="10" Text="2-WAY / STATUS" Foreground="#7F8B99" Margin="5" />
 
-                <ScrollViewer Grid.Row="1" Grid.ColumnSpan="8" VerticalScrollBarVisibility="Auto">
+                <ScrollViewer Grid.Row="1" Grid.ColumnSpan="11" VerticalScrollBarVisibility="Auto">
                     <ItemsControl x:Name="StationsItems">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Border Background="#202832" CornerRadius="6" Margin="0,4" Padding="4">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="55" />
-                                            <ColumnDefinition Width="150" />
-                                            <ColumnDefinition Width="150" />
-                                            <ColumnDefinition Width="80" />
-                                            <ColumnDefinition Width="80" />
+                                            <ColumnDefinition Width="48" />
                                             <ColumnDefinition Width="130" />
-                                            <ColumnDefinition Width="150" />
+                                            <ColumnDefinition Width="135" />
+                                            <ColumnDefinition Width="65" />
+                                            <ColumnDefinition Width="65" />
+                                            <ColumnDefinition Width="115" />
+                                            <ColumnDefinition Width="145" />
+                                            <ColumnDefinition Width="75" />
+                                            <ColumnDefinition Width="95" />
+                                            <ColumnDefinition Width="95" />
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" Text="{Binding Id}" VerticalAlignment="Center" Margin="5" />
@@ -68,7 +116,13 @@
                                         <TextBox Grid.Column="4" Text="{Binding RtspPort, UpdateSourceTrigger=PropertyChanged}" Margin="3" />
                                         <TextBox Grid.Column="5" Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Margin="3" />
                                         <PasswordBox Grid.Column="6" x:Name="PasswordBox" Margin="3" PasswordChanged="PasswordBox_PasswordChanged" Tag="{Binding}" />
-                                        <TextBlock Grid.Column="7" x:Name="StatusText" Text="NOT TESTED" Foreground="#7F8B99" VerticalAlignment="Center" Margin="8,0" />
+                                        <TextBox Grid.Column="7" Text="{Binding RoomNumber, UpdateSourceTrigger=PropertyChanged}" Margin="3" />
+                                        <TextBox Grid.Column="8" Text="{Binding ExtensionNumber, UpdateSourceTrigger=PropertyChanged}" Margin="3" />
+                                        <TextBox Grid.Column="9" Text="{Binding TwoWayAudioChannel, UpdateSourceTrigger=PropertyChanged}" Margin="3" />
+                                        <StackPanel Grid.Column="10" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <CheckBox Content="2-WAY" IsChecked="{Binding TwoWayAudioEnabled, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Margin="5,0,10,0" />
+                                            <TextBlock x:Name="StatusText" Text="NOT TESTED" Foreground="#7F8B99" VerticalAlignment="Center" />
+                                        </StackPanel>
                                     </Grid>
                                 </Border>
                             </DataTemplate>
@@ -78,12 +132,15 @@
             </Grid>
         </Border>
 
-        <Grid Grid.Row="2" Margin="0,12,0,0">
+        <Grid Grid.Row="3" Margin="0,12,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBlock x:Name="FilePathText" VerticalAlignment="Center" Foreground="#6F7B89" />
+            <StackPanel>
+                <TextBlock x:Name="FilePathText" Foreground="#6F7B89" />
+                <TextBlock x:Name="IndoorFilePathText" Foreground="#6F7B89" Margin="0,3,0,0" />
+            </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal">
                 <Button Content="TEST ALL" Click="TestAllButton_Click" Padding="18,10" Margin="0,0,8,0" Background="#263241" Foreground="White" BorderThickness="0" />
                 <Button Content="SAVE CONFIGURATION" Click="SaveButton_Click" Padding="18,10" Background="#1F9D61" Foreground="White" BorderThickness="0" />

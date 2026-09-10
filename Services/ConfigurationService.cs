@@ -15,6 +15,7 @@ public static class ConfigurationService
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SNAPPY");
 
     private static readonly string FilePath = Path.Combine(Folder, "outdoor-stations.json");
+    private static readonly string IndoorFilePath = Path.Combine(Folder, "indoor-room.json");
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -46,7 +47,31 @@ public static class ConfigurationService
         File.WriteAllText(FilePath, JsonSerializer.Serialize(normalized, JsonOptions));
     }
 
+    public static IndoorConfiguration LoadIndoor()
+    {
+        try
+        {
+            if (!File.Exists(IndoorFilePath))
+                return new IndoorConfiguration();
+
+            var json = File.ReadAllText(IndoorFilePath);
+            return JsonSerializer.Deserialize<IndoorConfiguration>(json, JsonOptions)
+                   ?? new IndoorConfiguration();
+        }
+        catch
+        {
+            return new IndoorConfiguration();
+        }
+    }
+
+    public static void SaveIndoor(IndoorConfiguration configuration)
+    {
+        Directory.CreateDirectory(Folder);
+        File.WriteAllText(IndoorFilePath, JsonSerializer.Serialize(configuration, JsonOptions));
+    }
+
     public static string GetFilePath() => FilePath;
+    public static string GetIndoorFilePath() => IndoorFilePath;
 
     public static List<OutdoorStation> CreateDefaults()
     {
@@ -66,7 +91,9 @@ public static class ConfigurationService
                 MainIndoorName = "MAIN INDOOR",
                 RoomNumber = "101",
                 ExtensionName = "INDOOR EXTENSION 01",
-                ExtensionNumber = "1"
+                ExtensionNumber = "1",
+                TwoWayAudioChannel = 1,
+                TwoWayAudioEnabled = true
             });
         }
         return result;
@@ -74,12 +101,9 @@ public static class ConfigurationService
 
     private static List<OutdoorStation> Normalize(List<OutdoorStation> source)
     {
-        var result = source
-            .Where(x => x is not null)
-            .Take(MaximumOutdoorStations)
-            .ToList();
-
+        var result = source.Where(x => x is not null).Take(MaximumOutdoorStations).ToList();
         var defaults = CreateDefaults();
+
         for (var i = 0; i < MaximumOutdoorStations; i++)
         {
             if (i >= result.Count)
@@ -100,6 +124,7 @@ public static class ConfigurationService
             item.RoomNumber = string.IsNullOrWhiteSpace(item.RoomNumber) ? defaults[i].RoomNumber : item.RoomNumber.Trim();
             item.ExtensionName = string.IsNullOrWhiteSpace(item.ExtensionName) ? defaults[i].ExtensionName : item.ExtensionName.Trim();
             item.ExtensionNumber = string.IsNullOrWhiteSpace(item.ExtensionNumber) ? defaults[i].ExtensionNumber : item.ExtensionNumber.Trim();
+            item.TwoWayAudioChannel = item.TwoWayAudioChannel < 1 ? 1 : item.TwoWayAudioChannel;
         }
 
         return result;
